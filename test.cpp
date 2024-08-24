@@ -8,5 +8,5 @@ int main(int argc,char* argv[])
         std::string temp=argv[i];
         temp+=".report";
         reportPngDataBlock(argv[i],temp.c_str());
-    }
+    };
 }
