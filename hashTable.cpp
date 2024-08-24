@@ -10,7 +10,7 @@
 int main()
 {
     using namespace std;
-    HashTable hash(100);
+    HashTable hash(7);
 
     if(!hash.add(39)){a:cout<<"failed!"<<endl;return -1;}
     if(!hash.add(139))goto a;
@@ -19,9 +19,15 @@ int main()
     cout<<"139的数量:"<<hash.check(139)<<endl;
     if(!hash.del(39))goto a;
     cout<<"39的数量:"<<hash.check(39)<<endl;
-    cout<<"删除成功了吗?"<<(hash.del(139)?"成功":"失败")<<endl;
-    cout<<"删除成功了吗?"<<(hash.del(139)?"成功":"失败")<<endl;
+    cout<<"139的数量:"<<hash.check(139)<<endl;
+    cout<<"139删除成功了吗?"<<(hash.del(139)?"成功":"失败")<<endl;
+    cout<<"139删除成功了吗?"<<(hash.del(139)?"成功":"失败")<<endl;
     cout<<"139剩余数量:"<<hash.check(139)<<endl;
+    hash.add(239);
+    cout<<"239剩余数量:"<<hash.check(239)<<endl;
+    hash.add(123);
+    hash.add(123);
+    cout<<"123剩余数量:"<<hash.check(123)<<endl;
 }
 #endif
 
@@ -79,23 +85,26 @@ void HashTable::newNodeInit(Pair* ppair,int data_)//初始化节点
     ppair->next=nullptr;
 }
 
-bool HashTable::deleteNode(int data_)
+bool HashTable::deleteNode(int data_)//删除项，将上一项的next指针设为nullptr
 {
     Pair** pppair;
-    int index=getIndex(data_);
     Pair* temp=hash_table;
+    int index=getIndex(data_);
     pppair=&temp;
     (*pppair)+=index;//此时*pppair指向data存放在的链表
     Pair** lastPppairValue=pppair;
+    
     bool returnValue;
-    while ((*pppair)!=nullptr&&(*pppair)->data!=data_)
+    while ((*pppair)!=nullptr)
     {
         lastPppairValue=pppair;
         pppair=&((*pppair)->next);
         if((*pppair)->data=data_)
         {
+            Pair* temp=(*pppair)->next;
             returnValue=delNode((*pppair));
-            (*lastPppairValue)->next=nullptr;
+            (*lastPppairValue)->next=temp;
+            break;
         }
     }
     return returnValue;
@@ -103,6 +112,8 @@ bool HashTable::deleteNode(int data_)
 
 HashTable::HashTable(int size)//初始化哈希表，分配size个Pair的内存
 {
+    if(size<=0)
+        return;
     hash_table=new Pair[size];
     size_=size;
     for(int i=0;i<size;i++)
