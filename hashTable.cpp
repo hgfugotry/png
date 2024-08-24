@@ -88,26 +88,29 @@ void HashTable::newNodeInit(Pair* ppair,int data_)//初始化节点
 bool HashTable::deleteNode(int data_)//删除项，将上一项的next指针设为nullptr
 {
     Pair** pppair;
+
     Pair* temp=hash_table;
-    int index=getIndex(data_);
-    pppair=&temp;
-    (*pppair)+=index;//此时*pppair指向data存放在的链表
-    Pair** lastPppairValue=pppair;
+    pppair=&temp;//绕个圈子是防止hash_table的值被改变
     
-    bool returnValue;
+    int index=getIndex(data_);
+    (*pppair)+=index;//此时*pppair指向data存放在的链表
+    
+    Pair** lastPppairValue=pppair;
+
+    bool success=false;
     while ((*pppair)!=nullptr)
     {
-        lastPppairValue=pppair;
+        lastPppairValue=pppair;//存放上次循环的pppair值
         pppair=&((*pppair)->next);
         if((*pppair)->data=data_)
         {
             Pair* temp=(*pppair)->next;
-            returnValue=delNode((*pppair));
-            (*lastPppairValue)->next=temp;
+            success=delNode((*pppair));
+            (*lastPppairValue)->next=temp;//更改上一项的指针
             break;
         }
     }
-    return returnValue;
+    return success;
 }
 
 HashTable::HashTable(int size)//初始化哈希表，分配size个Pair的内存
